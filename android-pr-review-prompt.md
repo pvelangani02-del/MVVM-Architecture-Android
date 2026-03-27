@@ -135,13 +135,6 @@ git diff ${MERGE_BASE}..origin/${SOURCE}
 git log --oneline ${MERGE_BASE}..origin/${SOURCE} --no-merges
 ```
 
-**Focus on Android files**:
-- `.kt` / `.java` - Kotlin/Java source files
-- `.xml` - Layouts, resources, manifest
-- `build.gradle.kts` / `build.gradle` - Build configuration
-- `proguard-rules.pro` - ProGuard configuration
-- `AndroidManifest.xml` - App manifest
-
 ### Step 4: Apply Android-Specific Rules
 
 Read ALL rules from [android-pr-review-rules.md](android-pr-review-rules.md) and check against changes.
@@ -176,43 +169,6 @@ UI Impact: Yes/No | Performance Impact: Yes/No
 ### 📱 Android Specific
 - Dependencies: Major changes listed
 - UI Changes: Screens affected
-
-### 📝 Review Checklist
-
-#### Functionality
-- [x/⚠️/❌] Run the app and see it looking fine
-- [x/⚠️/❌] UI is as per the design
-- [x/⚠️/❌] Theming is correct & matches with the design & Showing proper error views
-- [x/⚠️/❌] Functionality is fine (Online & Offline)
-- [x/⚠️/❌] All Acceptance criteria are met
-
-#### Code Quality/Best Practices
-- [x/⚠️/❌] Reusing the components if possible & Better way to do
-- [x/⚠️/❌] Proper architecture is used
-- [x/⚠️/❌] Best practices & principles (DRY, SOLID)
-- [x/⚠️/❌] Null checks are present
-- [x/⚠️/❌] Exceptions or errors handled properly
-
-#### Formatting and Readability
-- [x/⚠️/❌] Code readability
-- [x/⚠️/❌] Code style checks (Spacing, lines, formatting)
-- [x/⚠️/❌] Naming conventions are correct (Use CamelCase)
-- [x/⚠️/❌] Run Ktlint & detekt check
-
-#### Testing and Compatibility
-- [x/⚠️/❌] Unit Tests are written
-- [x/⚠️/❌] Accessibility is proper
-- [x/⚠️/❌] Check UI changing the system text size
-- [x/⚠️/❌] Analytics events added
-
-#### Documentation and Comments
-- [x/⚠️/❌] Documentation if necessary
-- [x/⚠️/❌] No commented code
-- [x/⚠️/❌] No Hardcoded strings
-- [x/⚠️/❌] Added proper logs
-
-> Use: ✅ = Pass, ⚠️ = Minor concern (with note), ❌ = Fail (with note)
-> Add a brief note next to any ⚠️ or ❌ item explaining the issue.
 
 ### 🎯 Decision
 ✅ APPROVE - Clean implementation, follows Android best practices
