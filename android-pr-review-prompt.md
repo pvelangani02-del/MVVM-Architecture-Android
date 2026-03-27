@@ -101,13 +101,6 @@ else
 fi
 ```
 
-**Detection Strategy for OPEN PRs**:
-
-1. **Best case**: Recent `git fetch` output shows new branch → use that
-2. **Pattern match**: Search for `feature/*, bugfix/*, hotfix/*` branches not in target branch
-3. **Time-based**: Get most recently updated branch not merged
-4. **Fallback**: List candidates and use the most recent one
-
 ### Step 3: Get Accurate Diff
 
 **For MERGED PRs** (has merge commit):
