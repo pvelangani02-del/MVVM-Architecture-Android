@@ -138,6 +138,7 @@ git log --oneline ${MERGE_BASE}..origin/${SOURCE} --no-merges
 ### Step 4: Apply Android-Specific Rules
 
 Read ALL rules from [android-pr-review-rules.md](android-pr-review-rules.md) and check against changes.
+Evaluate every checklist item and include the **Rules Checklist** section in the output report with ✅ Pass, ❌ Fail, or ⚠️ N/A per item.
 
 ### Step 5: Generate Balanced Report
 
@@ -169,6 +170,14 @@ UI Impact: Yes/No | Performance Impact: Yes/No
 ### 📱 Android Specific
 - Dependencies: Major changes listed
 - UI Changes: Screens affected
+
+### ✅ Rules Checklist
+Read all checklist items from [android-pr-review-rules.md](android-pr-review-rules.md) and evaluate each one against the PR changes. Reproduce every item exactly as listed in the rules file, marking each as:
+- ✅ Pass — PR satisfies this check
+- ❌ Fail — PR violates this check (add brief reason)
+- ⚠️ N/A — Not applicable to this PR's changes
+
+Preserve the original section groupings (Functionality, Code Quality, Formatting, Testing, Documentation) from the rules file.
 
 ### 🎯 Decision
 ✅ APPROVE - Clean implementation, follows Android best practices
