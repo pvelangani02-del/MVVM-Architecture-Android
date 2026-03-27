@@ -23,11 +23,10 @@ class TopHeadlineRepository @Inject constructor(private val networkService: Netw
      * @throws Exception if network request fails
      */
     fun getTopHeadlines(country: String): Flow<List<Article>> {
-        // Input validation
-        require(country.isNotBlank()) { "Country code cannot be blank" }
-        require(country.length == 2) { "Country code must be 2 characters (ISO 3166-1 alpha-2)" }
-
         return flow {
+            // Input validation inside flow so .catch() in collectors can handle it
+            require(country.isNotBlank()) { "Country code cannot be blank" }
+            require(country.length == 2) { "Country code must be 2 characters (ISO 3166-1 alpha-2)" }
             emit(networkService.getTopHeadlines(country))
         }.map { response ->
             response.articles

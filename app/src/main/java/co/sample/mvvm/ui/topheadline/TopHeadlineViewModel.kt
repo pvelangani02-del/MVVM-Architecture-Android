@@ -10,6 +10,9 @@ import co.sample.mvvm.data.model.Article
 import co.sample.mvvm.data.repository.TopHeadlineRepository
 import co.sample.mvvm.ui.base.UiState
 import co.sample.mvvm.utils.AppConstant.COUNTRY
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 /**
  * ViewModel for Top Headlines screen.
@@ -40,13 +43,10 @@ class TopHeadlineViewModel(private val topHeadlineRepository: TopHeadlineReposit
             _uiState.value = UiState.Loading
             topHeadlineRepository.getTopHeadlines(COUNTRY)
                 .catch { e ->
-                    val errorCode = when {
-                        e.message?.contains("Unable to resolve host") == true ->
-                            ERROR_NETWORK
-                        e.message?.contains("timeout") == true ->
-                            ERROR_TIMEOUT
-                        else ->
-                            ERROR_GENERIC
+                    val errorCode = when (e) {
+                        is UnknownHostException, is ConnectException -> ERROR_NETWORK
+                        is SocketTimeoutException -> ERROR_TIMEOUT
+                        else -> ERROR_GENERIC
                     }
                     _uiState.value = UiState.Error(errorCode)
                 }
