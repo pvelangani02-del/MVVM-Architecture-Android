@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import co.sample.mvvm.MVVMApplication
+import co.sample.mvvm.R
 import co.sample.mvvm.data.model.Article
 import co.sample.mvvm.databinding.ActivityTopHeadlineBinding
 import co.sample.mvvm.di.component.DaggerActivityComponent
@@ -77,14 +78,15 @@ class TopHeadlineActivity : AppCompatActivity() {
                             Log.d(TAG, "UI State: Loading")
                             if (!binding.swipeRefreshLayout.isRefreshing) {
                                 binding.progressBar.visibility = View.VISIBLE
+                                binding.recyclerView.visibility = View.GONE
                             }
-                            binding.recyclerView.visibility = View.GONE
                         }
                         is UiState.Error -> {
                             Log.e(TAG, "UI State: Error - ${it.message}")
                             binding.progressBar.visibility = View.GONE
                             binding.swipeRefreshLayout.isRefreshing = false
-                            Toast.makeText(this@TopHeadlineActivity, it.message, Toast.LENGTH_LONG)
+                            val errorMsg = it.message.ifEmpty { getString(R.string.error_unknown) }
+                            Toast.makeText(this@TopHeadlineActivity, errorMsg, Toast.LENGTH_LONG)
                                 .show()
                         }
                     }
