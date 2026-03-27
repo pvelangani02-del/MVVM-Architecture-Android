@@ -18,7 +18,7 @@ Review <source-branch> against <target-branch>
 ```
 Review PR: https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/1
 Review PR: https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/1 https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/1
-Review feature/JIRA-123 against develop
+Review feature/JIRA-123 against main
 ```
 
 **Works with**:
@@ -70,6 +70,14 @@ git fetch origin
 # Extract PR number from URL
 PR_NUMBER=<extracted_from_url>
 
+# Resolve target branch (base branch)
+# Priority:
+# 1) Explicit user input: "Review <source> against <target>"
+# 2) PR metadata (if gh is available): gh pr view <PR_NUMBER> --json baseRefName
+# 3) Remote default branch: origin/HEAD
+# 4) Fallback candidates: main, master, develop
+TARGET_BRANCH=<detected_target_branch>
+
 # Step A: Check if PR is MERGED (has merge commit)
 MERGE_COMMIT=$(git log --oneline --all | grep -i "pull request #${PR_NUMBER}" | head -1)
 
@@ -80,7 +88,7 @@ if [ -n "$MERGE_COMMIT" ]; then
   # Continue with merge commit analysis
 else
   # OPEN PR: Find the branch
-  git branch -r --no-merged origin/develop | grep -v HEAD
+  git branch -r --no-merged origin/${TARGET_BRANCH} | grep -v HEAD
 
   # Common Android branch patterns:
   # - feature/JIRA-XXX or feature/ticket-name
@@ -89,14 +97,15 @@ else
   # - release/version-number
 
   SOURCE_BRANCH=<detected_branch>
-  TARGET_BRANCH="develop"  # Or main, release
-fi
+  TARGET_BRANCH=<detected_target_branch>
+  
+
 ```
 
 **Detection Strategy for OPEN PRs**:
 
 1. **Best case**: Recent `git fetch` output shows new branch → use that
-2. **Pattern match**: Search for `feature/*, bugfix/*, hotfix/*` branches not in develop
+2. **Pattern match**: Search for `feature/*, bugfix/*, hotfix/*` branches not in target branch
 3. **Time-based**: Get most recently updated branch not merged
 4. **Fallback**: List candidates and use the most recent one
 
@@ -113,7 +122,7 @@ git diff ${MERGE_BASE}..<source_parent>
 **For OPEN PRs** (no merge commit yet):
 
 ```bash
-TARGET="develop"
+TARGET=<detected_target_branch>
 SOURCE=<detected_branch>
 
 MERGE_BASE=$(git merge-base origin/${TARGET} origin/${SOURCE})
@@ -165,8 +174,6 @@ UI Impact: Yes/No | Performance Impact: Yes/No
 1. What was done well (only if noteworthy)
 
 ### 📱 Android Specific
-- Architecture: MVVM/MVP/Clean/MVI
-- Min SDK: XX | Target SDK: XX
 - Dependencies: Major changes listed
 - UI Changes: Screens affected
 
