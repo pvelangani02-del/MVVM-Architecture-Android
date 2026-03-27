@@ -121,7 +121,13 @@ class TopHeadlineActivity : AppCompatActivity() {
     /**
      * Shows error state with proper user feedback.
      */
-    private fun showError(message: String) {
+    private fun showError(errorCode: String) {
+        val message = when (errorCode) {
+            TopHeadlineViewModel.ERROR_NETWORK -> getString(R.string.network_error_message)
+            TopHeadlineViewModel.ERROR_TIMEOUT -> getString(R.string.timeout_error_message)
+            else -> getString(R.string.error_message)
+        }
+
         AlertDialog.Builder(this)
             .setMessage(message)
             .setPositiveButton(R.string.retry_button) { _, _ ->

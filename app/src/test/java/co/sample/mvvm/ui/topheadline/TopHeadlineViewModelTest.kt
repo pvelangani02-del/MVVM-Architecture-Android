@@ -71,7 +71,7 @@ class TopHeadlineViewModelTest {
     @Test
     fun `when fetching headlines fails, uiState should be Error`() = runTest {
         // Given
-        val errorMessage = "Network error"
+        val errorMessage = "Unable to resolve host"
         `when`(repository.getTopHeadlines(COUNTRY)).thenReturn(flow {
             throw Exception(errorMessage)
         })
@@ -82,7 +82,7 @@ class TopHeadlineViewModelTest {
         // Then
         val state = viewModel.uiState.value
         assertTrue(state is UiState.Error)
-        assertTrue((state as UiState.Error).message.contains(errorMessage))
+        assertEquals(TopHeadlineViewModel.ERROR_NETWORK, (state as UiState.Error).message)
     }
 
     @Test

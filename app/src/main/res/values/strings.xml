@@ -5,6 +5,8 @@
 
     <!-- Error handling -->
     <string name="error_message">Unable to load headlines</string>
+    <string name="network_error_message">Network error. Please check your internet connection.</string>
+    <string name="timeout_error_message">Request timed out. Please try again.</string>
     <string name="retry_button">Retry</string>
     <string name="no_articles_to_display">No articles to display</string>
     <string name="no_title_available">No title available</string>

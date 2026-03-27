@@ -17,6 +17,12 @@ import co.sample.mvvm.utils.AppConstant.COUNTRY
  */
 class TopHeadlineViewModel(private val topHeadlineRepository: TopHeadlineRepository) : ViewModel() {
 
+    companion object {
+        const val ERROR_NETWORK = "error_network"
+        const val ERROR_TIMEOUT = "error_timeout"
+        const val ERROR_GENERIC = "error_generic"
+    }
+
     private val _uiState = MutableStateFlow<UiState<List<Article>>>(UiState.Loading)
 
     val uiState: StateFlow<UiState<List<Article>>> = _uiState
@@ -34,15 +40,15 @@ class TopHeadlineViewModel(private val topHeadlineRepository: TopHeadlineReposit
             _uiState.value = UiState.Loading
             topHeadlineRepository.getTopHeadlines(COUNTRY)
                 .catch { e ->
-                    val errorMessage = when {
+                    val errorCode = when {
                         e.message?.contains("Unable to resolve host") == true ->
-                            "Network error. Please check your internet connection."
+                            ERROR_NETWORK
                         e.message?.contains("timeout") == true ->
-                            "Request timed out. Please try again."
+                            ERROR_TIMEOUT
                         else ->
-                            "Failed to load headlines: ${e.message ?: "Unknown error"}"
+                            ERROR_GENERIC
                     }
-                    _uiState.value = UiState.Error(errorMessage)
+                    _uiState.value = UiState.Error(errorCode)
                 }
                 .collect { articles ->
                     _uiState.value = UiState.Success(articles)
