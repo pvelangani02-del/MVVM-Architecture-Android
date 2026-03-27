@@ -4,6 +4,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,9 +17,9 @@ import co.sample.mvvm.databinding.TopHeadlineItemLayoutBinding
  * Adapter for displaying top headline articles in a RecyclerView.
  * Uses DiffUtil for efficient list updates and proper ViewHolder pattern.
  */
-class TopHeadlineAdapter(
-    private val articleList: ArrayList<Article>
-) : RecyclerView.Adapter<TopHeadlineAdapter.DataViewHolder>() {
+class TopHeadlineAdapter : RecyclerView.Adapter<TopHeadlineAdapter.DataViewHolder>() {
+
+    private val differ = AsyncListDiffer(this, DIFF_CALLBACK)
 
     /**
      * ViewHolder class for article items with proper null safety and accessibility.
@@ -28,9 +29,9 @@ class TopHeadlineAdapter(
 
         fun bind(article: Article) {
             val context = binding.root.context
-            val safeTitle = article.title.ifEmpty { context.getString(R.string.no_title_available) }
-            val safeDescription = article.description.ifEmpty { context.getString(R.string.no_description_available) }
-            val safeSource = article.source.name.ifEmpty { context.getString(R.string.unknown_source) }
+            val safeTitle = article.title.orEmpty().ifEmpty { context.getString(R.string.no_title_available) }
+            val safeDescription = article.description.orEmpty().ifEmpty { context.getString(R.string.no_description_available) }
+            val safeSource = article.source.name.orEmpty().ifEmpty { context.getString(R.string.unknown_source) }
 
             // Safe text binding with defaults
             binding.textViewTitle.text = safeTitle
@@ -47,6 +48,8 @@ class TopHeadlineAdapter(
             Glide.with(binding.imageViewBanner.context)
                 .load(article.imageUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(android.R.color.darker_gray)
+                .error(android.R.color.darker_gray)
                 .into(binding.imageViewBanner)
 
             // Safe URL handling
@@ -69,13 +72,10 @@ class TopHeadlineAdapter(
             )
         )
 
-    override fun getItemCount(): Int = articleList.size
+    override fun getItemCount(): Int = differ.currentList.size
 
     override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
-        // Bounds check for safety
-        if (position >= 0 && position < articleList.size) {
-            holder.bind(articleList[position])
-        }
+        holder.bind(differ.currentList[position])
     }
 
     /**
@@ -83,12 +83,7 @@ class TopHeadlineAdapter(
      * This prevents unnecessary view rebinds and provides smooth animations.
      */
     fun updateData(newList: List<Article>) {
-        val diffCallback = ArticleDiffCallback(articleList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-
-        articleList.clear()
-        articleList.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
+        differ.submitList(newList)
     }
 
     /**
@@ -97,27 +92,16 @@ class TopHeadlineAdapter(
      */
     @Deprecated("Use updateData() for better performance with DiffUtil")
     fun addData(list: List<Article>) {
-        articleList.addAll(list)
+        updateData(list)
     }
 
-    /**
-     * DiffUtil callback for calculating list differences efficiently.
-     */
-    private class ArticleDiffCallback(
-        private val oldList: List<Article>,
-        private val newList: List<Article>
-    ) : DiffUtil.Callback() {
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Article>() {
+            override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean =
+                oldItem.url == newItem.url
 
-        override fun getOldListSize(): Int = oldList.size
-
-        override fun getNewListSize(): Int = newList.size
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].url == newList[newItemPosition].url
-        }
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition] == newList[newItemPosition]
+            override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean =
+                oldItem == newItem
         }
     }
 }

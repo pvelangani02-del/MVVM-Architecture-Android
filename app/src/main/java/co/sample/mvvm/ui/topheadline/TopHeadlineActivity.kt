@@ -34,6 +34,7 @@ class TopHeadlineActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTopHeadlineBinding
     private var lastHandledErrorCode: String? = null
+    private var errorDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
@@ -134,13 +135,20 @@ class TopHeadlineActivity : AppCompatActivity() {
             else -> getString(R.string.error_message)
         }
 
-        AlertDialog.Builder(this)
+        errorDialog?.dismiss()
+        errorDialog = AlertDialog.Builder(this)
             .setMessage(message)
             .setPositiveButton(R.string.retry_button) { _, _ ->
                 topHeadlineViewModel.retry()
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        errorDialog?.dismiss()
+        errorDialog = null
     }
 
     /**

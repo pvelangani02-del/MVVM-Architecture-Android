@@ -35,7 +35,6 @@
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
 # Gson
--keepattributes Signature
 -keepattributes *Annotation*
 -dontwarn sun.misc.**
 -keep class * implements com.google.gson.TypeAdapter
