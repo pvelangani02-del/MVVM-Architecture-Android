@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import co.sample.mvvm.R
 import co.sample.mvvm.data.model.Article
 import co.sample.mvvm.databinding.TopHeadlineItemLayoutBinding
 
@@ -26,14 +27,21 @@ class TopHeadlineAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(article: Article) {
+            val context = binding.root.context
+            val safeTitle = article.title.ifEmpty { context.getString(R.string.no_title_available) }
+            val safeDescription = article.description.ifEmpty { context.getString(R.string.no_description_available) }
+            val safeSource = article.source.name.ifEmpty { context.getString(R.string.unknown_source) }
+
             // Safe text binding with defaults
-            binding.textViewTitle.text = article.title.ifEmpty { "No title available" }
-            binding.textViewDescription.text = article.description.ifEmpty { "No description available" }
-            binding.textViewSource.text = article.source.name.ifEmpty { "Unknown source" }
+            binding.textViewTitle.text = safeTitle
+            binding.textViewDescription.text = safeDescription
+            binding.textViewSource.text = safeSource
 
             // Accessibility - content descriptions for screen readers
-            binding.imageViewBanner.contentDescription = "Image for ${article.title.ifEmpty { "article" }}"
-            binding.root.contentDescription = "Article: ${article.title.ifEmpty { "untitled" }} from ${article.source.name.ifEmpty { "unknown source" }}"
+            binding.imageViewBanner.contentDescription =
+                context.getString(R.string.image_for_article, safeTitle)
+            binding.root.contentDescription =
+                context.getString(R.string.article_item_description, safeTitle, safeSource)
 
             // Optimized image loading with error handling
             Glide.with(binding.imageViewBanner.context)

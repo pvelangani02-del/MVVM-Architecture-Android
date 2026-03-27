@@ -3,12 +3,14 @@ package co.sample.mvvm.ui.topheadline
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import co.sample.mvvm.R
 import kotlinx.coroutines.launch
 import co.sample.mvvm.MVVMApplication
 import co.sample.mvvm.data.model.Article
@@ -78,12 +80,14 @@ class TopHeadlineActivity : AppCompatActivity() {
         when (state) {
             is UiState.Success -> {
                 binding.progressBar.visibility = View.GONE
-                binding.recyclerView.visibility = View.VISIBLE
 
                 // Validate data before rendering
                 if (state.data.isNotEmpty()) {
+                    binding.recyclerView.visibility = View.VISIBLE
                     renderList(state.data)
                 } else {
+                    renderList(emptyList())
+                    binding.recyclerView.visibility = View.GONE
                     showEmptyState()
                 }
             }
@@ -111,14 +115,20 @@ class TopHeadlineActivity : AppCompatActivity() {
      * Shows empty state when no articles are available.
      */
     private fun showEmptyState() {
-        Toast.makeText(this, "No articles to display", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.no_articles_to_display), Toast.LENGTH_SHORT).show()
     }
 
     /**
      * Shows error state with proper user feedback.
      */
     private fun showError(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        AlertDialog.Builder(this)
+            .setMessage(message)
+            .setPositiveButton(R.string.retry_button) { _, _ ->
+                topHeadlineViewModel.retry()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     /**

@@ -17,7 +17,7 @@ Review <source-branch> against <target-branch>
 
 ```
 Review PR: https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/1
-Review PR: https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/1 https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/1
+Review PR: https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/1 https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/2
 Review feature/JIRA-123 against develop
 ```
 
