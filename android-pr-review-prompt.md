@@ -18,7 +18,6 @@ Review <source-branch> against <target-branch>
 ```
 Review PR: https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/1
 Review PR: https://github.com/org/repo/pull/1 https://github.com/org/repo/pull/2
-Review feature/JIRA-123 against main
 ```
 
 **Works with**:
@@ -146,6 +145,16 @@ Evaluate every checklist item and include the **Rules Checklist** section in the
 Purpose: Brief description of what PR does
 Risk: 🟢 LOW | 🟡 MEDIUM | 🔴 HIGH
 UI Impact: Yes/No | Performance Impact: Yes/No
+
+Branch Name: ✅ Follows convention | ❌ Does not follow convention (explain)
+
+Expected branch naming patterns:
+- `feature/<ticket-id>-short-description` (e.g., feature/JIRA-123-add-login)
+- `bugfix/<ticket-id>-short-description`
+- `hotfix/<ticket-id>-short-description`
+- `release/<version>` (e.g., release/1.2.0)
+
+Flag if: branch uses generic names (e.g., `feature`, `feature-2`, `improvements`), missing ticket ID, or not following kebab-case.
 
 ### 🚨 Critical Issues (X)
 1. **[file:line] Issue Title**
