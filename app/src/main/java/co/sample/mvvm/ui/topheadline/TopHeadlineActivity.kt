@@ -1,6 +1,7 @@
 package co.sample.mvvm.ui.topheadline
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,10 @@ import javax.inject.Inject
 
 class TopHeadlineActivity : AppCompatActivity() {
 
+    companion object {
+        private const val TAG = "TopHeadlineActivity"
+    }
+
     @Inject
     lateinit var topHeadlineViewModel: TopHeadlineViewModel
 
@@ -33,6 +38,7 @@ class TopHeadlineActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTopHeadlineBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Log.d(TAG, "Activity created")
         setupUI()
         setupObserver()
     }
@@ -47,6 +53,12 @@ class TopHeadlineActivity : AppCompatActivity() {
             )
         )
         recyclerView.adapter = adapter
+
+        // Setup swipe-to-refresh
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            Log.d(TAG, "Swipe refresh triggered")
+            topHeadlineViewModel.refreshHeadlines()
+        }
     }
 
     private fun setupObserver() {
@@ -55,17 +67,23 @@ class TopHeadlineActivity : AppCompatActivity() {
                 topHeadlineViewModel.uiState.collect {
                     when (it) {
                         is UiState.Success -> {
+                            Log.d(TAG, "UI State: Success with ${it.data.size} articles")
                             binding.progressBar.visibility = View.GONE
+                            binding.swipeRefreshLayout.isRefreshing = false
                             renderList(it.data)
                             binding.recyclerView.visibility = View.VISIBLE
                         }
                         is UiState.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
+                            Log.d(TAG, "UI State: Loading")
+                            if (!binding.swipeRefreshLayout.isRefreshing) {
+                                binding.progressBar.visibility = View.VISIBLE
+                            }
                             binding.recyclerView.visibility = View.GONE
                         }
                         is UiState.Error -> {
-                            //Handle Error
+                            Log.e(TAG, "UI State: Error - ${it.message}")
                             binding.progressBar.visibility = View.GONE
+                            binding.swipeRefreshLayout.isRefreshing = false
                             Toast.makeText(this@TopHeadlineActivity, it.message, Toast.LENGTH_LONG)
                                 .show()
                         }

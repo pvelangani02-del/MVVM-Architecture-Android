@@ -1,5 +1,6 @@
 package co.sample.mvvm.ui.topheadline
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +14,10 @@ import co.sample.mvvm.utils.AppConstant.COUNTRY
 
 class TopHeadlineViewModel(private val topHeadlineRepository: TopHeadlineRepository) : ViewModel() {
 
+    companion object {
+        private const val TAG = "TopHeadlineViewModel"
+    }
+
     private val _uiState = MutableStateFlow<UiState<List<Article>>>(UiState.Loading)
 
     val uiState: StateFlow<UiState<List<Article>>> = _uiState
@@ -22,15 +27,25 @@ class TopHeadlineViewModel(private val topHeadlineRepository: TopHeadlineReposit
     }
 
     private fun fetchTopHeadlines() {
+        Log.d(TAG, "Fetching top headlines for country: $COUNTRY")
+        _uiState.value = UiState.Loading
+
         viewModelScope.launch {
             topHeadlineRepository.getTopHeadlines(COUNTRY)
                 .catch { e ->
-                    _uiState.value = UiState.Error(e.toString())
+                    Log.e(TAG, "Error fetching headlines", e)
+                    _uiState.value = UiState.Error(e.message ?: "Unknown error occurred")
                 }
-                .collect {
-                    _uiState.value = UiState.Success(it)
+                .collect { articles ->
+                    Log.d(TAG, "Successfully fetched ${articles.size} articles")
+                    _uiState.value = UiState.Success(articles)
                 }
         }
+    }
+
+    fun refreshHeadlines() {
+        Log.d(TAG, "Manual refresh triggered")
+        fetchTopHeadlines()
     }
 
 }
