@@ -2,4 +2,14 @@
     <string name="app_name">MVVM-Architecture-Android</string>
     <string name="top_headlines_title">Top Headlines</string>
     <string name="top_headlines_subtitle">Latest news from United States</string>
+
+    <!-- Error handling -->
+    <string name="error_message">Unable to load headlines</string>
+    <string name="retry_button">Retry</string>
+
+    <!-- Accessibility -->
+    <string name="retry_button_description">Retry loading headlines</string>
+    <string name="loading_description">Loading headlines</string>
+    <string name="articles_list_description">List of top headline articles</string>
 </resources>
+

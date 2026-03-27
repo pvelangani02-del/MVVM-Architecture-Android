@@ -18,6 +18,10 @@ import co.sample.mvvm.di.module.ActivityModule
 import co.sample.mvvm.ui.base.UiState
 import javax.inject.Inject
 
+/**
+ * Main activity displaying top headlines.
+ * Implements MVVM architecture with proper lifecycle handling and DI.
+ */
 class TopHeadlineActivity : AppCompatActivity() {
 
     @Inject
@@ -37,6 +41,9 @@ class TopHeadlineActivity : AppCompatActivity() {
         setupObserver()
     }
 
+    /**
+     * Sets up UI components including RecyclerView with proper layout manager.
+     */
     private fun setupUI() {
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -49,41 +56,82 @@ class TopHeadlineActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
     }
 
+    /**
+     * Observes ViewModel state changes and updates UI accordingly.
+     * Uses proper lifecycle-aware collection to prevent memory leaks.
+     */
     private fun setupObserver() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                topHeadlineViewModel.uiState.collect {
-                    when (it) {
-                        is UiState.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            renderList(it.data)
-                            binding.recyclerView.visibility = View.VISIBLE
-                        }
-                        is UiState.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                            binding.recyclerView.visibility = View.GONE
-                        }
-                        is UiState.Error -> {
-                            //Handle Error
-                            binding.progressBar.visibility = View.GONE
-                            Toast.makeText(this@TopHeadlineActivity, it.message, Toast.LENGTH_LONG)
-                                .show()
-                        }
-                    }
+                topHeadlineViewModel.uiState.collect { state ->
+                    handleUiState(state)
                 }
             }
         }
     }
 
-    private fun renderList(articleList: List<Article>) {
-        adapter.addData(articleList)
-        adapter.notifyDataSetChanged()
+    /**
+     * Handles different UI states (Success, Loading, Error).
+     * Provides clear visual feedback for each state.
+     */
+    private fun handleUiState(state: UiState<List<Article>>) {
+        when (state) {
+            is UiState.Success -> {
+                binding.progressBar.visibility = View.GONE
+                binding.recyclerView.visibility = View.VISIBLE
+
+                // Validate data before rendering
+                if (state.data.isNotEmpty()) {
+                    renderList(state.data)
+                } else {
+                    showEmptyState()
+                }
+            }
+            is UiState.Loading -> {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.GONE
+            }
+            is UiState.Error -> {
+                binding.progressBar.visibility = View.GONE
+                binding.recyclerView.visibility = View.GONE
+                showError(state.message)
+            }
+        }
     }
 
+    /**
+     * Renders the list of articles using the adapter.
+     * Uses DiffUtil for efficient updates.
+     */
+    private fun renderList(articleList: List<Article>) {
+        adapter.updateData(articleList)
+    }
+
+    /**
+     * Shows empty state when no articles are available.
+     */
+    private fun showEmptyState() {
+        Toast.makeText(this, "No articles to display", Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * Shows error state with proper user feedback.
+     */
+    private fun showError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    /**
+     * Injects dependencies using Dagger.
+     */
     private fun injectDependencies() {
         DaggerActivityComponent.builder()
             .applicationComponent((application as MVVMApplication).applicationComponent)
-            .activityModule(ActivityModule(this)).build().inject(this)
+            .activityModule(ActivityModule(this))
+            .build()
+            .inject(this)
     }
 
 }
+
+
