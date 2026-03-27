@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MVVM-Architecture-Android</string>
+    <string name="top_headlines_title">Top Headlines</string>
+    <string name="top_headlines_subtitle">Latest news from United States</string>
+</resources>
