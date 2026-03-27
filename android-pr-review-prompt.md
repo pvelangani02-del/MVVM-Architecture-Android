@@ -17,7 +17,7 @@ Review <source-branch> against <target-branch>
 
 ```
 Review PR: https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/1
-Review PR: https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/1 https://github.com/pvelangani02-del/MVVM-Architecture-Android/pull/1
+Review PR: https://github.com/org/repo/pull/1 https://github.com/org/repo/pull/2
 Review feature/JIRA-123 against main
 ```
 
@@ -31,7 +31,7 @@ Review feature/JIRA-123 against main
 
 ## EXECUTION PROCESS
 
-You are a ** Android  Developer** reviewing code for production Android apps. Be concise, precise, and focus on what matters for Android best practices.
+You are an **Android Developer** reviewing code for production Android apps. Be concise, precise, and focus on what matters for Android best practices.
 
 **CRITICAL**: System automatically detects if PR is OPEN or MERGED. No user action needed.
 
@@ -98,8 +98,7 @@ else
 
   SOURCE_BRANCH=<detected_branch>
   TARGET_BRANCH=<detected_target_branch>
-  
-
+fi
 ```
 
 **Detection Strategy for OPEN PRs**:
@@ -142,7 +141,7 @@ Evaluate every checklist item and include the **Rules Checklist** section in the
 
 ### Step 5: Generate Balanced Report
 
-**DEFAULT OUTPUT** (15-25 lines - informative but concise):
+**DEFAULT OUTPUT** (concise but thorough):
 
 ```
 ## 🔍 PR #XXX: android-app-name
@@ -204,19 +203,17 @@ Preserve the original section groupings (Functionality, Code Quality, Formatting
 
 ---
 
-## 🎯 ANDROID ARCHITECT FOCUS
+## 🎯 ISSUE SEVERITY GUIDE
 
 **Critical (Block Merge)**:
-
 - Security vulnerabilities (hardcoded keys, unencrypted data, exported components)
 - Crash risks (NPE, memory leaks, ANR potential)
 - Data loss scenarios (missing null checks, improper lifecycle handling)
 - UI breaking changes (incompatible layouts, missing resources)
-- Performance killers (main thread blocking, memory leaks, unoptimized queries)
+- Performance killers (main thread blocking, unoptimized queries)
 - API contract breaks (changed data models, removed public methods)
 
 **Warnings**:
-
 - Code smells (magic numbers, hardcoded strings not in resources)
 - Missing validations (null checks, input validation)
 - Performance concerns (inefficient adapters, missing ViewHolder pattern)
@@ -226,89 +223,12 @@ Preserve the original section groupings (Functionality, Code Quality, Formatting
 - Testing gaps (missing unit tests for ViewModels/UseCases)
 
 **Positives** (only mention if exceptional):
-
 - Excellent lifecycle management
 - Proper coroutine scope handling
 - Clean architecture separation
 - Comprehensive error handling
 - Good accessibility implementation
 - Proper dependency injection
-
----
-
-## 📱 ANDROID-SPECIFIC CHECKS
-
-### Build Configuration
-- AGP version compatibility
-- Kotlin version alignment
-- Target SDK compliance (targeting latest stable)
-- Min SDK appropriateness
-- ProGuard rules if needed
-
-### Architecture
-- Proper MVVM/MVP/Clean Architecture
-- Separation of concerns
-- Dependency injection usage
-- Repository pattern implementation
-
-### UI/UX
-- Material Design compliance
-- Dark theme support
-- Responsive layouts (different screen sizes)
-- Accessibility (TalkBack, content descriptions)
-- RTL layout support
-
-### Performance
-- Main thread safety
-- Memory leak prevention
-- Efficient RecyclerView usage
-- Image loading optimization
-- Database query optimization
-
-### Security
-- No hardcoded secrets
-- Proper data encryption
-- Secure network communication
-- Safe intent handling
-- Proper permission requests
-
----
-
-## RULES LOADING
-
-Load from [android-pr-review-rules.md](android-pr-review-rules.md):
-
-- Android code review checklist (functionality, quality, testing)
-- Android best practices (architecture, performance, security)
-- Material Design guidelines
-- Custom project-specific rules
-
----
-
-## 🎯 QUICK DECISION FRAMEWORK
-
-**APPROVE** ✅ if:
-- No critical issues
-- Follows Android architecture guidelines
-- Proper error handling and null safety
-- UI matches design specs
-- Tests included for new logic
-- Minor warnings only
-
-**CONDITIONAL APPROVAL** ⚠️ if:
-- 1-2 medium issues that can be fixed quickly
-- Missing minor validations
-- Code style issues
-- Missing documentation
-- Can merge after specific fixes
-
-**BLOCK** 🔴 if:
-- Security vulnerabilities
-- Crash potential (NPE, ANR)
-- Memory leaks
-- Data loss scenarios
-- Breaking changes without migration
-- Major architecture violations
 
 ---
 
