@@ -33,6 +33,7 @@ class TopHeadlineActivity : AppCompatActivity() {
     lateinit var adapter: TopHeadlineAdapter
 
     private lateinit var binding: ActivityTopHeadlineBinding
+    private var lastHandledErrorCode: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectDependencies()
@@ -79,6 +80,7 @@ class TopHeadlineActivity : AppCompatActivity() {
     private fun handleUiState(state: UiState<List<Article>>) {
         when (state) {
             is UiState.Success -> {
+                lastHandledErrorCode = null
                 binding.progressBar.visibility = View.GONE
 
                 // Validate data before rendering
@@ -92,13 +94,17 @@ class TopHeadlineActivity : AppCompatActivity() {
                 }
             }
             is UiState.Loading -> {
+                lastHandledErrorCode = null
                 binding.progressBar.visibility = View.VISIBLE
                 binding.recyclerView.visibility = View.GONE
             }
             is UiState.Error -> {
                 binding.progressBar.visibility = View.GONE
                 binding.recyclerView.visibility = View.GONE
-                showError(state.message)
+                if (lastHandledErrorCode != state.message) {
+                    lastHandledErrorCode = state.message
+                    showError(state.message)
+                }
             }
         }
     }
