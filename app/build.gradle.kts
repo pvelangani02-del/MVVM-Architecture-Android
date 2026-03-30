@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.browser)
 
     testImplementation(libs.junit)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockito.core)
     androidTestImplementation(libs.junit.test.ext)
     androidTestImplementation(libs.espresso.core)
 }
