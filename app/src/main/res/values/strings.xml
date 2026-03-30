@@ -2,4 +2,22 @@
     <string name="app_name">MVVM-Architecture-Android</string>
     <string name="top_headlines_title">Top Headlines</string>
     <string name="top_headlines_subtitle">Latest news from United States</string>
+
+    <!-- Error handling -->
+    <string name="error_message">Unable to load headlines</string>
+    <string name="network_error_message">Network error. Please check your internet connection.</string>
+    <string name="timeout_error_message">Request timed out. Please try again.</string>
+    <string name="retry_button">Retry</string>
+    <string name="no_articles_to_display">No articles to display</string>
+    <string name="no_title_available">No title available</string>
+    <string name="no_description_available">No description available</string>
+    <string name="unknown_source">Unknown source</string>
+
+    <!-- Accessibility -->
+    <string name="retry_button_description">Retry loading headlines</string>
+    <string name="loading_description">Loading headlines</string>
+    <string name="articles_list_description">List of top headline articles</string>
+    <string name="image_for_article">Image for %1$s</string>
+    <string name="article_item_description">Article: %1$s from %2$s</string>
 </resources>
+
