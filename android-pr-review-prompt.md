@@ -5,12 +5,13 @@
 
 ---
 
+> 💡 **HOW TO USE:** Supported commands and input formats for triggering a PR review.
+
 ## USAGE
 
 ```
 Review PR: <pr-url>
 Review PR: <pr-url1> <pr-url2> <pr-url3>  (multiple PRs)
-Review <source-branch> against <target-branch>
 ```
 
 **Examples**:
@@ -28,77 +29,49 @@ Review PR: https://github.com/org/repo/pull/1 https://github.com/org/repo/pull/2
 
 ---
 
+> 💡 **WORKFLOW:** Step-by-step process the reviewer follows from locating the repo to generating the report.
+
 ## EXECUTION PROCESS
 
-You are an **Android Developer** reviewing code for production Android apps. Be concise, precise, and focus on what matters for Android best practices.
 
 **CRITICAL**: System automatically detects if PR is OPEN or MERGED. No user action needed.
 
+> 💡 **STEP 1:** Find the Android project root in the workspace.
+
 ### Step 1: Locate Repository
 
-**Standard Android repos**: Check workspace for Android project structure:
+Check workspace for Android project structure:
 - Look for `build.gradle.kts` or `build.gradle` files
 - Check for `app/src/main/` directory structure
 - Identify `AndroidManifest.xml` location
 
-**Project structure patterns**:
-```
-android-app/
-├── app/
-│   ├── build.gradle.kts
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/ or kotlin/
-│   │   │   ├── res/
-│   │   │   └── AndroidManifest.xml
-│   │   ├── test/
-│   │   └── androidTest/
-├── build.gradle.kts
-├── settings.gradle.kts
-└── gradle.properties
-```
+> 💡 **STEP 2:** Determine whether the PR is open or closed.
 
 ### Step 2: Parse PR & Find Branch
 
-**For PR URLs** - Handle both OPEN and MERGED PRs:
+**For PR URLs**: Extract source and target branches from the GitHub PR page (e.g., `"wants to merge into develop from feature"`).
+
+**For explicit branches**: Use the branches provided by the user (e.g., `"Review feature against develop"`).
 
 ```bash
 cd ${REPO_PATH}
 git fetch origin
 
-# Extract PR number from URL
-PR_NUMBER=<extracted_from_url>
-
-# Resolve target branch (base branch)
-# Priority:
-# 1) Explicit user input: "Review <source> against <target>"
-# 2) PR metadata (if gh is available): gh pr view <PR_NUMBER> --json baseRefName
-# 3) Remote default branch: origin/HEAD
-# 4) Fallback candidates: main, master, develop
-TARGET_BRANCH=<detected_target_branch>
-
-# Step A: Check if PR is MERGED (has merge commit)
+# Check if PR is MERGED (has merge commit)
 MERGE_COMMIT=$(git log --oneline --all | grep -i "pull request #${PR_NUMBER}" | head -1)
 
 if [ -n "$MERGE_COMMIT" ]; then
   # MERGED PR: Extract branches from merge commit
   COMMIT_HASH=$(echo $MERGE_COMMIT | awk '{print $1}')
   PARENTS=$(git show --format="%P" --no-patch $COMMIT_HASH)
-  # Continue with merge commit analysis
 else
-  # OPEN PR: Find the branch
-  git branch -r --no-merged origin/${TARGET_BRANCH} | grep -v HEAD
-
-  # Common Android branch patterns:
-  # - feature/JIRA-XXX or feature/ticket-name
-  # - bugfix/description
-  # - hotfix/critical-fix
-  # - release/version-number
-
-  SOURCE_BRANCH=<detected_branch>
-  TARGET_BRANCH=<detected_target_branch>
+  # OPEN PR: Use source/target from PR page
+  SOURCE_BRANCH=<from_pr_page>
+  TARGET_BRANCH=<from_pr_page>
 fi
 ```
+
+> 💡 **STEP 3:** Compute merge-base and generate the diff for review.
 
 ### Step 3: Get Accurate Diff
 
@@ -126,10 +99,14 @@ git diff ${MERGE_BASE}..origin/${SOURCE}
 git log --oneline ${MERGE_BASE}..origin/${SOURCE} --no-merges
 ```
 
+> 💡 **STEP 4:** Evaluate the diff against the rules checklist from the rules file.
+
 ### Step 4: Apply Android-Specific Rules
 
 Read ALL rules from [android-pr-review-rules.md](android-pr-review-rules.md) and check against changes.
 Evaluate every checklist item and include the **Rules Checklist** section in the output report with ✅ Pass, ❌ Fail, or ⚠️ N/A per item.
+
+> 💡 **STEP 5:** Produce the final review report using the template below.
 
 ### Step 5: Generate Balanced Report
 
@@ -186,7 +163,9 @@ Preserve the original section groupings (Functionality, Code Quality, Formatting
 🔴 BLOCK - Critical issues: X, Y (security/crash risk)
 ```
 
-**OUTPUT RULES**:
+> 💡 **OUTPUT RULES:** Controls what to include/exclude in the review output.
+
+    **OUTPUT RULES**:
 
 - **Critical issues**: Include file:line, problem, impact, Android-specific concern
 - **Warnings**: 1 line with file reference and description
@@ -196,6 +175,8 @@ Preserve the original section groupings (Functionality, Code Quality, Formatting
 - **NO "Rule:" citations** - just state issues clearly
 - **Android context**: Mention SDK versions, architecture, UI impact
 
+> 💡 **ON-DEMAND DETAIL:** Only shown when the user explicitly asks for fixes or explanations.
+
 **WHEN USER ASKS** for details:
 
 - Show before/after code examples with Android context
@@ -204,6 +185,8 @@ Preserve the original section groupings (Functionality, Code Quality, Formatting
 - Step-by-step fix instructions with Android APIs
 
 ---
+
+> 💡 **SEVERITY GUIDE:** Defines what counts as Critical, Warning, or Positive to keep reviews consistent.
 
 ## 🎯 ISSUE SEVERITY GUIDE
 
@@ -233,6 +216,8 @@ Preserve the original section groupings (Functionality, Code Quality, Formatting
 - Proper dependency injection
 
 ---
+
+> 💡 **COMPLEXITY GUIDE:** Helps the reviewer gauge PR risk based on scope and lines changed.
 
 ## 📊 COMPLEXITY ASSESSMENT
 
