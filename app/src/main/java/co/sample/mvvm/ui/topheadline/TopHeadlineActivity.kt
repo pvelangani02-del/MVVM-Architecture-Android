@@ -11,6 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
+import co.sample.mvvm.BuildConfig
 import co.sample.mvvm.MVVMApplication
 import co.sample.mvvm.R
 import co.sample.mvvm.data.model.Article
@@ -39,7 +40,7 @@ class TopHeadlineActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTopHeadlineBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Log.d(TAG, "Activity created")
+        if (BuildConfig.DEBUG) Log.d(TAG, "Activity created")
         setupUI()
         setupObserver()
     }
@@ -57,7 +58,7 @@ class TopHeadlineActivity : AppCompatActivity() {
 
         // Setup swipe-to-refresh
         binding.swipeRefreshLayout.setOnRefreshListener {
-            Log.d(TAG, "Swipe refresh triggered")
+            if (BuildConfig.DEBUG) Log.d(TAG, "Swipe refresh triggered")
             topHeadlineViewModel.refreshHeadlines()
         }
     }
@@ -68,21 +69,20 @@ class TopHeadlineActivity : AppCompatActivity() {
                 topHeadlineViewModel.uiState.collect {
                     when (it) {
                         is UiState.Success -> {
-                            Log.d(TAG, "UI State: Success with ${it.data.size} articles")
+                            if (BuildConfig.DEBUG) Log.d(TAG, "UI State: Success with ${it.data.size} articles")
                             binding.progressBar.visibility = View.GONE
                             binding.swipeRefreshLayout.isRefreshing = false
                             renderList(it.data)
                             binding.recyclerView.visibility = View.VISIBLE
                         }
                         is UiState.Loading -> {
-                            Log.d(TAG, "UI State: Loading")
-                            if (!binding.swipeRefreshLayout.isRefreshing) {
-                                binding.progressBar.visibility = View.VISIBLE
-                                binding.recyclerView.visibility = View.GONE
-                            }
+                            if (BuildConfig.DEBUG) Log.d(TAG, "UI State: Loading")
+                            binding.swipeRefreshLayout.isRefreshing = false
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.recyclerView.visibility = View.GONE
                         }
                         is UiState.Error -> {
-                            Log.e(TAG, "UI State: Error - ${it.message}")
+                            if (BuildConfig.DEBUG) Log.e(TAG, "UI State: Error - ${it.message}")
                             binding.progressBar.visibility = View.GONE
                             binding.swipeRefreshLayout.isRefreshing = false
                             val errorMsg = it.message.ifEmpty { getString(R.string.error_unknown) }
