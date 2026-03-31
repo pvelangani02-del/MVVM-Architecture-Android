@@ -39,6 +39,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -49,6 +50,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.constraintlayout)
     implementation(libs.recyclerview)
+    implementation(libs.swiperefreshlayout)
     implementation(libs.glide)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
@@ -61,6 +63,8 @@ dependencies {
     implementation(libs.browser)
 
     testImplementation(libs.junit)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockito.core)
     androidTestImplementation(libs.junit.test.ext)
     androidTestImplementation(libs.espresso.core)
 }

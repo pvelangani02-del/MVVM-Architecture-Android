@@ -2,6 +2,7 @@ package co.sample.mvvm.ui.topheadline
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -17,20 +18,29 @@ class TopHeadlineViewModel(private val topHeadlineRepository: TopHeadlineReposit
 
     val uiState: StateFlow<UiState<List<Article>>> = _uiState
 
+    private var fetchJob: Job? = null
+
     init {
         fetchTopHeadlines()
     }
 
     private fun fetchTopHeadlines() {
-        viewModelScope.launch {
+        fetchJob?.cancel()
+        _uiState.value = UiState.Loading
+
+        fetchJob = viewModelScope.launch {
             topHeadlineRepository.getTopHeadlines(COUNTRY)
                 .catch { e ->
-                    _uiState.value = UiState.Error(e.toString())
+                    _uiState.value = UiState.Error(e.message.orEmpty())
                 }
-                .collect {
-                    _uiState.value = UiState.Success(it)
+                .collect { articles ->
+                    _uiState.value = UiState.Success(articles)
                 }
         }
+    }
+
+    fun refreshHeadlines() {
+        fetchTopHeadlines()
     }
 
 }
